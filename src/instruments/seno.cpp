@@ -49,7 +49,8 @@ void Seno::command(long cmd, long note, long vel) {
   }
   else if (cmd == 0) {	//Sound extinguished without waiting for release to end
     adsr.end();
-  }
+  }    
+  
 }
 
 
