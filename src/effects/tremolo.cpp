@@ -2,7 +2,7 @@
 #include <math.h>
 #include "tremolo.h"
 #include "keyvalue.h"
-#include "instrument.h"
+
 
 #include <stdlib.h>
 
