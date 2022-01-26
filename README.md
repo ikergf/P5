@@ -27,16 +27,27 @@ permitan visualizar el funcionamiento de la curva ADSR.
 
 * Un instrumento con una envolvente ADSR genérica, para el que se aprecie con claridad cada uno de sus
   parámetros: ataque (A), caída (D), mantenimiento (S) y liberación (R).
+  
+  ![ADSR GENÉRICA](https://github.com/ikergf/P5/blob/pons-garcia/Captures/ADSR_generica_graf.PNG)
+  
 * Un instrumento *percusivo*, como una guitarra o un piano, en el que el sonido tenga un ataque rápido, no
   haya mantenimiemto y el sonido se apague lentamente.
   - Para un instrumento de este tipo, tenemos dos situaciones posibles:
     * El intérprete mantiene la nota *pulsada* hasta su completa extinción.
+    
+    ![ADSR MANTENER](https://github.com/ikergf/P5/blob/pons-garcia/Captures/ADSR_piano_mantener_graf.PNG)
+    
     * El intérprete da por finalizada la nota antes de su completa extinción, iniciándose una disminución
 	  abrupta del sonido hasta su finalización.
+	  
+    ![ADSR SIN MANTENER](https://github.com/ikergf/P5/blob/pons-garcia/Captures/ADSR_piano_sin_mantener_graf.PNG)
+    
   - Debera representar en esta memoria **ambos** posibles finales de la nota.
 * Un instrumento *plano*, como los de cuerdas frotadas (violines y semejantes) o algunos de viento. En
   ellos, el ataque es relativamente rápido hasta alcanzar el nivel de mantenimiento (sin sobrecarga), y la
   liberación también es bastante rápida.
+  
+  ![ADSR CUERDA](https://github.com/ikergf/P5/blob/pons-garcia/Captures/ADSR_cuerda_graf.PNG)
 
 Para los cuatro casos, deberá incluir una gráfica en la que se visualice claramente la curva ADSR. Deberá
 añadir la información necesaria para su correcta interpretación, aunque esa información puede reducirse a
@@ -48,9 +59,97 @@ Implemente el instrumento `Seno` tomando como modelo el `InstrumentDumb`. La se�
 mediante búsqueda de los valores en una tabla.
 
 - Incluya, a continuación, el código del fichero `seno.cpp` con los métodos de la clase Seno.
+
+```c++
+#include <iostream>
+#include <math.h>
+#include "seno.h"
+#include "keyvalue.h"
+
+#include <stdlib.h>
+
+using namespace upc;
+using namespace std;
+
+Seno::Seno(const std::string &param) 
+  : adsr(SamplingRate, param) {
+  bActive = false;
+  x.resize(BSIZE);
+
+  /*
+    You can use the class keyvalue to parse "param" and configure your instrument.
+    Take a Look at keyvalue.h    
+  */
+  KeyValue kv(param);
+  int N;
+
+  if (!kv.to_int("N",N))
+    N = 40; //default value
+  
+  //Create a tbl with one period of a sinusoidal wave
+  tbl.resize(N);
+  float phase = 0, step = 2 * M_PI /(float) N;
+  index = 0;
+  for (int i=0; i < N ; ++i) {
+    tbl[i] = sin(phase);
+    phase += step;
+  }
+}
+
+
+void Seno::command(long cmd, long note, long vel) {
+  if (cmd == 9) {		//'Key' pressed: attack begins
+    bActive = true;
+    adsr.start();
+    index = 0;
+    aux=0;
+	  A = vel / 127.;
+    f0 = 440.0 * pow(2.0, (note-69.0)/12.0);
+    alpha =2*M_PI *f0 /SamplingRate;
+  }
+  else if (cmd == 8) {	//'Key' released: sustain ends, release begins
+    adsr.stop();
+  }
+  else if (cmd == 0) {	//Sound extinguished without waiting for release to end
+    adsr.end();
+  }    
+  
+}
+
+
+const vector<float> & Seno::synthesize() {
+  if (not adsr.active()) {
+    x.assign(x.size(), 0);
+    bActive = false;
+    return x;
+  }
+  else if (not bActive)
+    return x;
+
+  for (unsigned int i=0; i<x.size(); ++i) {
+    aux=aux+alpha;
+    index=(aux*40)/(2*M_PI);
+    x[i] = A * tbl[round(index)];
+    if (round(index) == tbl.size())
+      index = 0;
+    else if (aux>=2*M_PI)
+      aux=0;
+  }
+  adsr(x); //apply envelope to x and update internal status of ADSR
+
+  return x;
+}
+```
+
 - Explique qué método se ha seguido para asignar un valor a la señal a partir de los contenidos en la tabla,
   e incluya una gráfica en la que se vean claramente (use pelotitas en lugar de líneas) los valores de la
   tabla y los de la señal generada.
+  
+  **Sabemos que la tabla contiene un periodo de un seno dividido en N muestras, por lo que la fase también quedará dividida en N muestras. Entonces, el método que hemos seguido ha sido el de obtener la velocidad angular a partir de la frecuencia normalizada y a cada iteración observar el argumento de la onda para obtener el valor en la tabla correspondiente con ese argumento.**
+  **En la gráfica que hay a continuación se muestra una comparación entre los valores de la tabla y los de la onda generada con el instrumento 'Seno', la cual corresponde a un Fa# (1479,97Hz). Podemos apreciar una amplitud menor, la cual es debida a la velocidad que en este caso era un valor arbitrario (60), y una onda bastante adecuada pero no perfecta debido quizá al pequeño número de muestras que contiene la tabla.**
+  
+  ![Gráfica comparativa](https://github.com/ikergf/P5/blob/pons-garcia/Captures/Gr%C3%A1fica%20comparativa.png)
+  
 - Si ha implementado la síntesis por tabla almacenada en fichero externo, incluya a continuación el código
   del método `command()`.
 
@@ -60,6 +159,13 @@ mediante búsqueda de los valores en una tabla.
   sinusoidal. Deberá explicar detalladamente cómo se manifiestan los parámetros del efecto (frecuencia e
   índice de modulación) en la señal generada (se valorará que la explicación esté contenida en las propias
   gráficas, sin necesidad de *literatura*).
+  
+  ### Trémolo:
+  
+  ![Gráfica trémolo](https://github.com/ikergf/P5/blob/pons-garcia/Captures/Tremolo_bueno_info.PNG)
+  
+  ### Vibrato:
+  
 - Si ha generado algún efecto por su cuenta, explique en qué consiste, cómo lo ha implementado y qué
   resultado ha producido. Incluya, en el directorio `work/ejemplos`, los ficheros necesarios para apreciar
   el efecto, e indique, a continuación, la orden necesaria para generar los ficheros de audio usando el
@@ -93,6 +199,10 @@ Use el programa `synth` para generar canciones a partir de su partitura MIDI. Co
 - Coloque el resultado, junto con los ficheros necesarios para generarlo, en el directorio `work/music`.
 - Indique, a continuación, la orden necesaria para generar la señal (suponiendo que todos los archivos
   necesarios están en directorio indicado).
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~.sh
+  synth work/music/FM_piano_contrabajo.orc work/music/ToyStory_A_Friend_in_me.sco work/music/ToyStory_A_Friend_in_me.wav
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 También puede orquestar otros temas más complejos, como la banda sonora de *Hawaii5-0* o el villacinco de
 John Lennon *Happy Xmas (War Is Over)* (fichero `The_Christmas_Song_Lennon.sco`), o cualquier otra canción
@@ -101,3 +211,10 @@ de su agrado o composición. Se valorará la riqueza instrumental, su modelado y
   `work/music`.
 - Indique, a continuación, la orden necesaria para generar cada una de las señales usando los distintos
   ficheros.
+  
+  **Hemos recreado la canción de la famosa consola Wii:**
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~.sh
+  synth work/music/FM_piano.orc work/music/wii_channel.sco work/music/wii_channel.wav
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
