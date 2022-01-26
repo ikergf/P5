@@ -27,16 +27,27 @@ permitan visualizar el funcionamiento de la curva ADSR.
 
 * Un instrumento con una envolvente ADSR genérica, para el que se aprecie con claridad cada uno de sus
   parámetros: ataque (A), caída (D), mantenimiento (S) y liberación (R).
+  
+  ![ADSR GENÉRICA](https://github.com/ikergf/P5/blob/pons-garcia/Captures/ADSR_generica_graf.PNG)
+  
 * Un instrumento *percusivo*, como una guitarra o un piano, en el que el sonido tenga un ataque rápido, no
   haya mantenimiemto y el sonido se apague lentamente.
   - Para un instrumento de este tipo, tenemos dos situaciones posibles:
     * El intérprete mantiene la nota *pulsada* hasta su completa extinción.
+    
+    ![ADSR MANTENER](https://github.com/ikergf/P5/blob/pons-garcia/Captures/ADSR_piano_mantener_graf.PNG)
+    
     * El intérprete da por finalizada la nota antes de su completa extinción, iniciándose una disminución
 	  abrupta del sonido hasta su finalización.
+	  
+    ![ADSR SIN MANTENER](https://github.com/ikergf/P5/blob/pons-garcia/Captures/ADSR_piano_sin_mantener_graf.PNG)
+    
   - Debera representar en esta memoria **ambos** posibles finales de la nota.
 * Un instrumento *plano*, como los de cuerdas frotadas (violines y semejantes) o algunos de viento. En
   ellos, el ataque es relativamente rápido hasta alcanzar el nivel de mantenimiento (sin sobrecarga), y la
   liberación también es bastante rápida.
+  
+  ![ADSR CUERDA](https://github.com/ikergf/P5/blob/pons-garcia/Captures/ADSR_cuerda_graf.PNG)
 
 Para los cuatro casos, deberá incluir una gráfica en la que se visualice claramente la curva ADSR. Deberá
 añadir la información necesaria para su correcta interpretación, aunque esa información puede reducirse a
