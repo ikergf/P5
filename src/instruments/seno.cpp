@@ -38,6 +38,7 @@ void Seno::command(long cmd, long note, long vel) {
   if (cmd == 9) {		//'Key' pressed: attack begins
     bActive = true;
     adsr.start();
+    
     index = 0;
     aux=0;
 	  A = vel / 127.;
