@@ -223,4 +223,9 @@ de su agrado o composición. Se valorará la riqueza instrumental, su modelado y
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~.sh
   synth work/music/FM_piano.orc work/music/wii_channel.sco work/music/wii_channel.wav
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  **También hemos intentado recrear el tema de carga del juego Grand Theft Auto (GTA), aunque no hemos tenido tiempo de implementar todos los instrumentos:**
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~.sh
+  synth work/music/FM_piano_contrabajo_gta.orc work/music/gta.sco work/music/gta.wav
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
