@@ -146,7 +146,7 @@ const vector<float> & Seno::synthesize() {
   tabla y los de la señal generada.
   
   **Sabemos que la tabla contiene un periodo de un seno dividido en N muestras, por lo que la fase también quedará dividida en N muestras. Entonces, el método que hemos seguido ha sido el de obtener la velocidad angular a partir de la frecuencia normalizada y a cada iteración observar el argumento de la onda para obtener el valor en la tabla correspondiente con ese argumento.**
-  **En la gráfica que hay a continuación se muestra una comparación entre los valores de la tabla y los de la onda generada con el instrumento 'Seno', la cual corresponde a un Fa# (1479,97Hz). Podemos apreciar una amplitud menor, la cual es debida a la velocidad que en este caso era un valor arbitrario (60), y una onda bastante adecuada pero no perfecta debido quizá al pequeño número de muestras que contiene la tabla.**
+  **En la gráfica que hay a continuación se muestra una comparación entre los valores de la tabla y los de la onda generada con el instrumento 'Seno', la cual corresponde a un Fa# (1479,97Hz). Podemos apreciar una amplitud menor, la cual es debida a la velocidad que en este caso era un valor arbitrario (60), y una onda bastante adecuada pero no perfecta debido quizá al pequeño número de muestras que contiene la tabla, que en este caso eran 40.**
   
   ![Gráfica comparativa](https://github.com/ikergf/P5/blob/pons-garcia/Captures/Gr%C3%A1fica%20comparativa.png)
   
@@ -164,7 +164,10 @@ const vector<float> & Seno::synthesize() {
   
   ![Gráfica trémolo](https://github.com/ikergf/P5/blob/pons-garcia/Captures/Tremolo_bueno_info.PNG)
   
-  ### Vibrato:
+  ### Vibrato nota Mi (329,63Hz):
+  ![Gráfica vibrato](https://github.com/ikergf/P5/blob/pons-garcia/Captures/Vibrato_con_FFT.PNG)
+  
+  **Cabe destacar que pensábamos que el comportamiento del vibrato era oscilando la frecuencia entre un semitono por encima y uno por debajo de la frecuencia de la nota, aunque después de realizar la transformada de Fourier hemos podido ver que solo oscila entre la frecuencia original y el semitono por debajo. También aparece un componente frecuencial en el semitono superior, pero no creemos que sea lo suficientemente relevante.**
   
 - Si ha generado algún efecto por su cuenta, explique en qué consiste, cómo lo ha implementado y qué
   resultado ha producido. Incluya, en el directorio `work/ejemplos`, los ficheros necesarios para apreciar
@@ -180,6 +183,9 @@ deberá venir expresado en semitonos.
 
 - Use el instrumento para generar un vibrato de *parámetros razonables* e incluya una gráfica en la que se
   vea, claramente, la correspondencia entre los valores `N1`, `N2` e `I` con la señal obtenida.
+  
+  ![Gráfica FFT FM](https://github.com/ikergf/P5/blob/pons-garcia/Captures/FFT_FM_info.png)
+  
 - Use el instrumento para generar un sonido tipo clarinete y otro tipo campana. Tome los parámetros del
   sonido (N1, N2 e I) y de la envolvente ADSR del citado artículo. Con estos sonidos, genere sendas escalas
   diatónicas (fichero `doremi.sco`) y ponga el resultado en los ficheros `work/doremi/clarinete.wav` y
